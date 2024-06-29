@@ -18,6 +18,7 @@ public class Progam
         // Console.WriteLine(p.PrettifyNameROS());
         // Console.WriteLine(p.PrettifyNameString());
         // Console.WriteLine(p.PrettifyNameSTACK());
+        // Console.WriteLine(p.PrettifyNameSLICE());
 
     }
 }
@@ -41,6 +42,8 @@ public class PrettifyTests
 
     [Benchmark]
     public string PrettifyNameSTACK() => StringHelpers.PrettifyNameSTACK(name);
+    [Benchmark]
+    public string PrettifyNameSLICE() => StringHelpers.PrettifyNameSlice(name);
 
 }
 
@@ -77,6 +80,24 @@ public static class StringHelpers
         return sb.ToString();
     }
 
+    public static string PrettifyNameSlice(ReadOnlySpan<char> name)
+    {
+        StringBuilder sb = new StringBuilder(name.Length);
+        int left = 0;
+        for (int i = 0; i < name.Length; i++)
+        {
+            if (name[i] < 91 && i > 0)
+            {
+                sb.Append(name.Slice(left, i - left)); // (i-1) - left + 1
+                sb.Append(space);
+                left = i;
+            }
+        }
+        sb.Append(name.Slice(left, name.Length - left));
+
+        return sb.ToString();
+    }
+
     public static string PrettifyNameSTACK(ReadOnlySpan<char> name)
     {
         int capCount = 0;
@@ -100,5 +121,5 @@ public static class StringHelpers
         return new string(endString);
     }
 
-   
+
 }
